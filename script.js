@@ -1,11 +1,47 @@
-function login() {
-  const role = document.getElementById("role").value;
+let notes = JSON.parse(localStorage.getItem("notes")) || [];
 
-  if (role === "admin") {
-    window.location.href = "admin.html";
-  } else {
-    window.location.href = "dashboard.html";
-  }
+function logout() {
+  window.location.href = "index.html";
 }
 
-  
+function addNote() {
+  let note = {
+    title: title.value,
+    subject: subject.value,
+    content: content.value,
+    approved: false
+  };
+
+  notes.push(note);
+  localStorage.setItem("notes", JSON.stringify(notes));
+  alert("Note uploaded. Waiting for admin approval.");
+
+  title.value = "";
+  subject.value = "";
+  content.value = "";
+}
+
+function loadNotes() {
+  let div = document.getElementById("notes");
+  if (!div) return;
+
+  div.innerHTML = "";
+  notes.filter(n => n.approved).forEach(n => {
+    div.innerHTML += `
+      <div class="note">
+        <h3>${n.title}</h3>
+        <p>${n.subject}</p>
+        <p>${n.content}</p>
+      </div>
+    `;
+  });
+}
+
+function searchNotes() {
+  let q = search.value.toLowerCase();
+  document.querySelectorAll(".note").forEach(n => {
+    n.style.display = n.innerText.toLowerCase().includes(q) ? "block" : "none";
+  });
+}
+
+loadNotes();
