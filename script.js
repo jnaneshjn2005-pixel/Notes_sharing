@@ -9,6 +9,18 @@ if (window.location.pathname.includes("admin") && role !== "admin") {
 }
 let notes = JSON.parse(localStorage.getItem("notes")) || [];
 
+function login() {
+  const role = document.getElementById("role").value;
+
+  if (role === "admin") {
+    localStorage.setItem("role", "admin");
+    window.location.href = "admin.html";
+  } else {
+    localStorage.setItem("role", "user");
+    window.location.href = "dashboard.html";
+  }
+}
+
 function logout() {
   window.location.href = "index.html";
 }
