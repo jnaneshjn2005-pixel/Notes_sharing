@@ -18,7 +18,9 @@ function addNote() {
     title: title.value,
     subject: subject.value,
     content: content.value,
-    approved: false
+    approved: false,
+favorite: false,
+rating: 0
   };
 
   notes.push(note);
@@ -56,7 +58,11 @@ function downloadNote(title, content) {
   a.download = title + ".txt";
   a.click();
 }
-
+function toggleFav(index) {
+  notes[index].favorite = !notes[index].favorite;
+  localStorage.setItem("notes", JSON.stringify(notes));
+  loadNotes();
+}
 function searchNotes() {
   let q = search.value.toLowerCase();
   document.querySelectorAll(".note").forEach(n => {
