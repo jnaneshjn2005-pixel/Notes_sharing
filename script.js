@@ -103,4 +103,7 @@ function rate(index, stars) {
   localStorage.setItem("notes", JSON.stringify(notes));
   loadNotes();
 }
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+}
 
