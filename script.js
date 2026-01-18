@@ -45,3 +45,30 @@ function searchNotes() {
 }
 
 loadNotes();
+function loadAdminNotes() {
+  let div = document.getElementById("pending");
+  if (!div) return;
+
+  div.innerHTML = "";
+  notes.forEach((note, index) => {
+    if (!note.approved) {
+      div.innerHTML += `
+        <div class="note">
+          <h3>${note.title}</h3>
+          <p>${note.subject}</p>
+          <p>${note.content}</p>
+          <button onclick="approveNote(${index})">Approve</button>
+        </div>
+      `;
+    }
+  });
+}
+
+function approveNote(index) {
+  notes[index].approved = true;
+  localStorage.setItem("notes", JSON.stringify(notes));
+  loadAdminNotes();
+}
+
+loadAdminNotes();
+
