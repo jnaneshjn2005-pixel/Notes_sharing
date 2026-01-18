@@ -31,19 +31,30 @@ function addNote() {
 }
 
 function loadNotes() {
+  function loadNotes() {
   let div = document.getElementById("notes");
   if (!div) return;
 
   div.innerHTML = "";
-  notes.filter(n => n.approved).forEach(n => {
+  notes.filter(n => n.approved).forEach((n, i) => {
     div.innerHTML += `
       <div class="note">
         <h3>${n.title}</h3>
         <p>${n.subject}</p>
         <p>${n.content}</p>
+
+        <button onclick="downloadNote('${n.title}','${n.content}')">⬇️ Download</button>
+        <button onclick="toggleFav(${i})">❤️ Favorite</button>
+        <button onclick="rate(${i},5)">⭐ Rate</button>
       </div>
     `;
   });
+}
+function downloadNote(title, content) {
+  let a = document.createElement("a");
+  a.href = "data:text/plain;charset=utf-8," + encodeURIComponent(content);
+  a.download = title + ".txt";
+  a.click();
 }
 
 function searchNotes() {
