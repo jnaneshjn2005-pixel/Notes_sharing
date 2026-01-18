@@ -1,10 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>GitHub Pages Test</title>
+  <title>Notes Sharing Website</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Website is Working ✅</h1>
+
+  <h1>📘 Notes Sharing Website</h1>
+
+  <div class="upload-box">
+    <input type="text" id="title" placeholder="Note Title">
+    <input type="text" id="subject" placeholder="Subject">
+    <textarea id="content" placeholder="Write notes here"></textarea>
+    <button onclick="addNote()">Upload Note</button>
+  </div>
+
+  <h2>📂 Available Notes</h2>
+  <div id="notes"></div>
+
+  <script src="script.js"></script>
 </body>
 </html>
 
