@@ -162,6 +162,13 @@ function approveNote(i) {
   localStorage.setItem("notes", JSON.stringify(notes));
   loadAdminNotes();
 }
+function rejectNote(index) {
+  if (confirm("Are you sure you want to reject this file?")) {
+    notes.splice(index, 1);   // removes the file permanently
+    localStorage.setItem("notes", JSON.stringify(notes));
+    loadAdminNotes();
+  }
+}
 
 /* ===== DARK MODE ===== */
 function toggleTheme() {
