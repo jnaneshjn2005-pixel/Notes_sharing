@@ -13,8 +13,9 @@
 <div class="upload-box">
   <input type="text" id="title" placeholder="Note Title">
   <input type="text" id="subject" placeholder="Subject">
-  <textarea id="content" placeholder="Write notes"></textarea>
-  <button onclick="addNote()">Upload Note</button>
+  <input type="file" id="file" accept=".txt,.pdf,.doc,.docx">
+<button onclick="uploadFile()">Upload File (Admin Approval)</button>
+
 </div>
 
 <input type="text" id="search" placeholder="Search notes" onkeyup="searchNotes()">
