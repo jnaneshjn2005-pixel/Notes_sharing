@@ -43,9 +43,14 @@ function logout() {
 /* ===== ROUTE PROTECTION ===== */
 const role = localStorage.getItem("role");
 
-if (location.pathname.includes("dashboard") && role !== "user") {
+if (
+  location.pathname.includes("dashboard") &&
+  role !== "user" &&
+  role !== "admin"
+) {
   location.href = "index.html";
 }
+
 if (location.pathname.includes("admin") && role !== "admin") {
   location.href = "index.html";
 }
