@@ -145,14 +145,14 @@ function loadAdminNotes() {
   notes.forEach((n, i) => {
     if (!n.approved) {
       div.innerHTML += `
-        <div class="note">
-          <h3>📄 ${n.filename}</h3>
-<p><b>Uploaded by:</b> ${n.uploadedBy}</p>
-<button onclick="approveNote(${i})">Approve</button>
+  <div class="note">
+    <h3>📄 ${n.filename}</h3>
+    <p><b>Uploaded by:</b> ${n.uploadedBy}</p>
 
-          <button onclick="approveNote(${i})">Approve</button>
-        </div>
-      `;
+    <button onclick="approveNote(${i})">✅ Approve</button>
+    <button onclick="rejectNote(${i})" style="background:#dc3545;">❌ Reject</button>
+  </div>
+`;
     }
   });
 }
