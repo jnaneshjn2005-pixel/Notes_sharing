@@ -64,12 +64,15 @@ function uploadFile() {
   }
 
   const reader = new FileReader();
+
   reader.onload = function () {
     const note = {
       filename: file.name,
-      content: reader.result,
+      filetype: file.type,
+      data: reader.result,   // Base64 DataURL
       uploadedBy: localStorage.getItem("username"),
       approved: false,
+      favorite: false,
       rating: 0
     };
 
@@ -80,7 +83,7 @@ function uploadFile() {
     fileInput.value = "";
   };
 
-  reader.readAsText(file);
+  reader.readAsDataURL(file); // ⭐ IMPORTANT CHANGE
 }
 
 
