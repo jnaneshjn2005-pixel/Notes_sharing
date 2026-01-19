@@ -95,12 +95,15 @@ function loadNotes() {
   <div class="note">
     <h3>📄 ${n.filename}</h3>
     <p><b>Uploaded by:</b> ${n.uploadedBy}</p>
+    <p>⭐ Rating: ${n.rating}/5</p>
+    <button onclick="downloadNote('${n.filename}','${n.content}')">⬇️ Download</button>
 
-    <button onclick="approveNote(${i})">✅ Approve</button>
-    <button onclick="rejectNote(${i})" style="background:#dc3545;">❌ Reject</button>
+    <p>⭐ ${n.rating}/5</p>
+    <button onclick="downloadNote('${n.title}','${n.content}')">⬇️ Download</button>
+    <button onclick="toggleFav(${i})">❤️ Favorite</button>
+    <button onclick="rate(${i},5)">⭐ Rate</button>
   </div>
 `;
-
   });
 }
 
