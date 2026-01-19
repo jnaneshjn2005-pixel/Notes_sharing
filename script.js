@@ -29,24 +29,35 @@ function logout() {
   window.location.href = "index.html";
 }
 
-function addNote() {
-  let note = {
-    title: title.value,
-    subject: subject.value,
-    content: content.value,
-    approved: false,
-favorite: false,
-rating: 0
+function uploadFile() {
+  const fileInput = document.getElementById("file");
+  const file = fileInput.files[0];
+
+  if (!file) {
+    alert("Please select a file");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function () {
+    const note = {
+      filename: file.name,
+      content: reader.result,
+      uploadedBy: localStorage.getItem("username"),
+      approved: false,
+      rating: 0
+    };
+
+    notes.push(note);
+    localStorage.setItem("notes", JSON.stringify(notes));
+    alert("File uploaded. Waiting for admin approval");
+
+    fileInput.value = "";
   };
 
-  notes.push(note);
-  localStorage.setItem("notes", JSON.stringify(notes));
-  alert("Note uploaded. Waiting for admin approval.");
-
-  title.value = "";
-  subject.value = "";
-  content.value = "";
+  reader.readAsText(file);
 }
+
 
 function loadNotes() {
   function loadNotes() {
