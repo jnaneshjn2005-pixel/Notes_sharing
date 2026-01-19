@@ -95,20 +95,19 @@ function loadNotes() {
   div.innerHTML = "";
   notes.filter(n => n.approved).forEach((n, i) => {
     div.innerHTML += `
-  <div class="note">
-    <h3>📄 ${n.filename}</h3>
-    <p><b>Uploaded by:</b> ${n.uploadedBy}</p>
-    <p>⭐ Rating: ${n.rating}/5</p>
-    <button onclick="downloadNote('${n.filename}','${n.data}')">⬇️ Download</button>
+      <div class="note">
+        <h3>📄 ${n.filename}</h3>
+        <p><b>Uploaded by:</b> ${n.uploadedBy}</p>
+        <p>⭐ Rating: ${n.rating}/5</p>
 
-    <p>⭐ ${n.rating}/5</p>
-    <button onclick="downloadNote('${n.title}','${n.content}')">⬇️ Download</button>
-    <button onclick="toggleFav(${i})">❤️ Favorite</button>
-    <button onclick="rate(${i},5)">⭐ Rate</button>
-  </div>
-`;
+        <button onclick="downloadNote('${n.filename}','${n.data}')">⬇️ Download</button>
+        <button onclick="toggleFav(${i})">❤️ Favorite</button>
+        <button onclick="rate(${i},5)">⭐ Rate</button>
+      </div>
+    `;
   });
 }
+
 
 /* ===== SEARCH ===== */
 function searchNotes() {
