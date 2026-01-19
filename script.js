@@ -68,9 +68,11 @@ function loadNotes() {
   notes.filter(n => n.approved).forEach((n, i) => {
     div.innerHTML += `
       <div class="note">
-        <h3>${n.title}</h3>
-        <p>${n.subject}</p>
-        <p>${n.content}</p>
+        <h3>📄 ${n.filename}</h3>
+<p><b>Uploaded by:</b> ${n.uploadedBy}</p>
+<p>⭐ Rating: ${n.rating}/5</p>
+<button onclick="downloadNote('${n.filename}','${n.content}')">⬇️ Download</button>
+
 
         <button onclick="downloadNote('${n.title}','${n.content}')">⬇️ Download</button>
         <button onclick="toggleFav(${i})">❤️ Favorite</button>
@@ -107,9 +109,10 @@ function loadAdminNotes() {
     if (!note.approved) {
       div.innerHTML += `
         <div class="note">
-          <h3>${note.title}</h3>
-          <p>${note.subject}</p>
-          <p>${note.content}</p>
+          <h3>📄 ${n.filename}</h3>
+<p><b>Uploaded by:</b> ${n.uploadedBy}</p>
+<button onclick="approveNote(${i})">Approve</button>
+
           <button onclick="approveNote(${index})">Approve</button>
         </div>
       `;
