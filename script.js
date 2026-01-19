@@ -10,7 +10,11 @@ if (window.location.pathname.includes("admin") && role !== "admin") {
 let notes = JSON.parse(localStorage.getItem("notes")) || [];
 
 function login() {
+  const username = document.getElementById("username").value;
   const role = document.getElementById("role").value;
+
+  localStorage.setItem("username", username || "Anonymous");
+  
 
   if (role === "admin") {
     localStorage.setItem("role", "admin");
