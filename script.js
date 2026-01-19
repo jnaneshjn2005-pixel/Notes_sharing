@@ -6,19 +6,33 @@ if ("serviceWorker" in navigator) {
 /* ===== LOGIN ===== */
 function login() {
   const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
   const role = document.getElementById("role").value;
 
-  localStorage.setItem("username", username || "Anonymous");
-
-
+  // ADMIN LOGIN (STRICT)
   if (role === "admin") {
-    localStorage.setItem("role", "admin");
-    window.location.href = "admin.html";
-  } else {
+    if (username === "admin" && password === "admin123") {
+      localStorage.setItem("role", "admin");
+      localStorage.setItem("username", "Admin");
+      window.location.href = "admin.html";
+    } else {
+      alert("Invalid admin credentials");
+    }
+    return;
+  }
+
+  // USER LOGIN (OPEN)
+  if (role === "user") {
+    if (username.trim() === "") {
+      alert("Enter username");
+      return;
+    }
     localStorage.setItem("role", "user");
+    localStorage.setItem("username", username);
     window.location.href = "dashboard.html";
   }
 }
+
 
 /* ===== LOGOUT ===== */
 function logout() {
