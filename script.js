@@ -108,4 +108,8 @@ function approveNote(index) {
 }
 
 loadAdminNotes();
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+}
+
 
