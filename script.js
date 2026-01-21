@@ -13,8 +13,10 @@ function login() {
   const password = document.getElementById("password").value;
   const role = document.getElementById("role").value;
 
+  // ADMIN LOGIN
   if (role === "admin") {
     if (username === "admin" && password === "admin123") {
+      localStorage.clear();                 // 🔴 IMPORTANT
       localStorage.setItem("role", "admin");
       localStorage.setItem("username", "Admin");
       window.location.href = "admin.html";
@@ -24,16 +26,19 @@ function login() {
     return;
   }
 
+  // USER LOGIN
   if (role === "user") {
-    if (username === "") {
-      alert("Please enter username");
+    if (!username) {
+      alert("Enter username");
       return;
     }
+    localStorage.clear();                   // 🔴 IMPORTANT
     localStorage.setItem("role", "user");
     localStorage.setItem("username", username);
     window.location.href = "dashboard.html";
   }
 }
+
 
 /* ===============================
    LOGOUT
