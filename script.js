@@ -1,19 +1,13 @@
-/* ===== SERVICE WORKER ===== */
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
-}
+/* ================= LOGIN ================= */
 
-/* ===== LOGIN ===== */
-
-   function login() {
+function login() {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
   const role = document.getElementById("role").value;
 
-  console.log("LOGIN ATTEMPT:", username, role);
-
   if (role === "admin") {
     if (username === "admin" && password === "admin123") {
+      localStorage.clear();
       localStorage.setItem("role", "admin");
       localStorage.setItem("username", "Admin");
       window.location.href = "admin.html";
@@ -28,85 +22,79 @@ if ("serviceWorker" in navigator) {
       alert("Enter username");
       return;
     }
+    localStorage.clear();
     localStorage.setItem("role", "user");
     localStorage.setItem("username", username);
     window.location.href = "dashboard.html";
   }
 }
 
-    
-/* ===== LOGOUT ===== */
+/* ================= LOGOUT ================= */
+
 function logout() {
-  localStorage.removeItem("role");
+  localStorage.clear();
   window.location.href = "index.html";
 }
 
-/* ===== ROUTE PROTECTION ===== */
-(function protectRoutes() {
-  const role = localStorage.getItem("role");
-  const page = window.location.pathname;
+/* ================= ROUTE PROTECTION ================= */
 
-  // Protect dashboard
+(function () {
+  const role = localStorage.getItem("role");
+  const page = location.pathname;
+
   if (page.endsWith("dashboard.html")) {
     if (role !== "user" && role !== "admin") {
-      window.location.replace("index.html");
+      location.replace("index.html");
     }
   }
 
-  // Protect admin page
   if (page.endsWith("admin.html")) {
     if (role !== "admin") {
-      window.location.replace("index.html");
+      location.replace("index.html");
     }
   }
 })();
 
-/* ===== NOTES STORAGE ===== */
+/* ================= STORAGE ================= */
+
 let notes = JSON.parse(localStorage.getItem("notes")) || [];
 
-/* ===== ADD NOTE ===== */
-function uploadFile() {
-  const titleInput = document.getElementById("title");
-  const subjectInput = document.getElementById("subject");
-  const fileInput = document.getElementById("file");
+/* ================= FILE UPLOAD ================= */
 
-  const title = titleInput.value.trim();
-  const subject = subjectInput.value.trim();
-  const file = fileInput.files[0];
+function uploadFile() {
+  const title = document.getElementById("title").value.trim();
+  const subject = document.getElementById("subject").value.trim();
+  const file = document.getElementById("file").files[0];
 
   if (!title || !subject || !file) {
-    alert("Please enter title, subject, and select a file");
+    alert("Fill all fields");
     return;
   }
 
   const reader = new FileReader();
   reader.onload = function () {
-    const note = {
-      title: title,
-      subject: subject,
+    notes.push({
+      title,
+      subject,
       filename: file.name,
-      filetype: file.type,
       data: reader.result,
       uploadedBy: localStorage.getItem("username"),
-      approved: false,
-      favorite: false,
-      rating: 0
-    };
+      approved: false
+    });
 
-    notes.push(note);
     localStorage.setItem("notes", JSON.stringify(notes));
-    alert("File uploaded. Waiting for admin approval");
+    alert("Uploaded. Waiting for admin approval");
 
-    titleInput.value = "";
-    subjectInput.value = "";
-    fileInput.value = "";
+    document.getElementById("title").value = "";
+    document.getElementById("subject").value = "";
+    document.getElementById("file").value = "";
   };
 
   reader.readAsDataURL(file);
 }
 
+/* ================= USER VIEW ================= */
 
-/* ===== LOAD USER NOTES ===== */
 function loadNotes() {
   const div = document.getElementById("notes");
   if (!div) return;
@@ -116,117 +104,74 @@ function loadNotes() {
 
   notes.filter(n => n.approved).forEach((n, i) => {
     div.innerHTML += `
-      <div class="note" style="position:relative;">
-
-        ${role === "admin" ? `
-          <span onclick="adminDelete(${i})"
-                style="position:absolute;top:8px;right:8px;
-                       cursor:pointer;color:red;font-size:18px;">
-            🗑️
-          </span>` : ""}
-
-        <h3>📘 ${n.title}</h3>
-        <p><b>Subject:</b> ${n.subject}</p>
-        <p><b>File:</b> ${n.filename}</p>
-        <p><b>Uploaded by:</b> ${n.uploadedBy}</p>
-        <p>⭐ Rating: ${n.rating}/5</p>
-
-        <button onclick="downloadNote('${n.filename}','${n.data}')">⬇️ Download</button>
-        <button onclick="toggleFav(${i})">❤️ Favorite</button>
-        <button onclick="rate(${i},5)">⭐ Rate</button>
+      <div class="note">
+        ${role === "admin" ? `<span class="delete" onclick="deleteFile(${i})">🗑️</span>` : ""}
+        <h4>${n.title}</h4>
+        <p>Subject: ${n.subject}</p>
+        <p>File: ${n.filename}</p>
+        <p>Uploaded by: ${n.uploadedBy}</p>
+        <button onclick="downloadFile('${n.filename}','${n.data}')">Download</button>
       </div>
     `;
   });
 }
 
-/* ===== SEARCH ===== */
-function searchNotes() {
-  const q = search.value.toLowerCase();
-  document.querySelectorAll(".note").forEach(n => {
-    n.style.display = n.innerText.toLowerCase().includes(q) ? "block" : "none";
-  });
-}
+/* ================= ADMIN VIEW ================= */
 
-/* ===== DOWNLOAD ===== */
-function downloadNote(filename, data) {
-  const a = document.createElement("a");
-  a.href = data;          // Base64 data
-  a.download = filename; // original filename
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
-
-/* ===== FAVORITE ===== */
-function toggleFav(i) {
-  notes[i].favorite = !notes[i].favorite;
-  localStorage.setItem("notes", JSON.stringify(notes));
-}
-
-/* ===== RATING ===== */
-function rate(i, stars) {
-  notes[i].rating = stars;
-  localStorage.setItem("notes", JSON.stringify(notes));
-  loadNotes();
-}
-
-/* ===== ADMIN ===== */
 function loadAdminNotes() {
   const div = document.getElementById("pending");
   if (!div) return;
 
-  div.innerHTML += `
-  <div class="note">
-    <h3>📘 ${n.title}</h3>
-    <p><b>Subject:</b> ${n.subject}</p>
-    <p><b>File:</b> ${n.filename}</p>
-    <p><b>Uploaded by:</b> ${n.uploadedBy}</p>
-
-    <button onclick="approveNote(${i})">✅ Approve</button>
-    <button onclick="rejectNote(${i})" style="background:#dc3545;">❌ Reject</button>
-  </div>
-`;
+  div.innerHTML = "";
+  notes.forEach((n, i) => {
+    if (!n.approved) {
+      div.innerHTML += `
+        <div class="note">
+          <h4>${n.title}</h4>
+          <p>${n.subject}</p>
+          <p>${n.filename}</p>
+          <button onclick="approve(${i})">Approve</button>
+          <button onclick="reject(${i})">Reject</button>
+        </div>
+      `;
     }
   });
 }
 
-function approveNote(i) {
+/* ================= ACTIONS ================= */
+
+function approve(i) {
   notes[i].approved = true;
   localStorage.setItem("notes", JSON.stringify(notes));
   loadAdminNotes();
 }
-function adminDelete(index) {
-  // Extra safety: only admin can delete
-  if (localStorage.getItem("role") !== "admin") {
-    alert("You are not authorized");
-    return;
-  }
 
-  // Confirmation popup
-  if (confirm("Admin: Are you sure you want to delete this file?")) {
-    notes.splice(index, 1); // remove file
-    localStorage.setItem("notes", JSON.stringify(notes));
-    loadNotes();        // refresh user list
-    loadAdminNotes();   // refresh admin list
-  }
+function reject(i) {
+  notes.splice(i, 1);
+  localStorage.setItem("notes", JSON.stringify(notes));
+  loadAdminNotes();
 }
 
-function rejectNote(index) {
-  if (confirm("Are you sure you want to reject this file?")) {
-    notes.splice(index, 1);   // removes the file permanently
+function deleteFile(i) {
+  if (localStorage.getItem("role") !== "admin") return;
+  if (confirm("Delete this file?")) {
+    notes.splice(i, 1);
     localStorage.setItem("notes", JSON.stringify(notes));
+    loadNotes();
     loadAdminNotes();
   }
 }
 
-/* ===== DARK MODE ===== */
-function toggleTheme() {
-  document.body.classList.toggle("dark");
+/* ================= DOWNLOAD ================= */
+
+function downloadFile(name, data) {
+  const a = document.createElement("a");
+  a.href = data;
+  a.download = name;
+  a.click();
 }
 
-/* ===== AUTO LOAD ===== */
+/* ================= AUTO LOAD ================= */
+
 loadNotes();
 loadAdminNotes();
-
-
-
