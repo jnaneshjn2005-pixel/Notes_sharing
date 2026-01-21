@@ -49,6 +49,32 @@ function logout() {
   window.location.href = "index.html";
 }
 
+function login() {
+  // login code
+}
+
+function logout() {
+  // logout code
+}
+
+/* ===== ROUTE PROTECTION ===== */
+(function protectRoutes() {
+  const role = localStorage.getItem("role");
+  const page = location.pathname;
+
+  if (page.includes("dashboard.html")) {
+    if (role !== "user" && role !== "admin") {
+      location.replace("index.html");
+    }
+  }
+
+  if (page.includes("admin.html")) {
+    if (role !== "admin") {
+      location.replace("index.html");
+    }
+  }
+})();
+
 /* ===============================
    ROUTE PROTECTION
 ================================ */
