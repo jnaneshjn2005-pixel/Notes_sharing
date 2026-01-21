@@ -209,5 +209,9 @@ function downloadNote(name, data) {
 ================================ */
 loadNotes();
 loadAdminNotes();
+document.addEventListener("DOMContentLoaded", function () {
+  loadAdminNotes();
+});
+
 
 
