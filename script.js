@@ -60,21 +60,27 @@ let notes = JSON.parse(localStorage.getItem("notes")) || [];
 
 /* ===== ADD NOTE ===== */
 function uploadFile() {
+  const titleInput = document.getElementById("title");
+  const subjectInput = document.getElementById("subject");
   const fileInput = document.getElementById("file");
+
+  const title = titleInput.value.trim();
+  const subject = subjectInput.value.trim();
   const file = fileInput.files[0];
 
-  if (!file) {
-    alert("Please select a file");
+  if (!title || !subject || !file) {
+    alert("Please enter title, subject, and select a file");
     return;
   }
 
   const reader = new FileReader();
-
   reader.onload = function () {
     const note = {
+      title: title,
+      subject: subject,
       filename: file.name,
       filetype: file.type,
-      data: reader.result,   // Base64 DataURL
+      data: reader.result,
       uploadedBy: localStorage.getItem("username"),
       approved: false,
       favorite: false,
@@ -85,10 +91,12 @@ function uploadFile() {
     localStorage.setItem("notes", JSON.stringify(notes));
     alert("File uploaded. Waiting for admin approval");
 
+    titleInput.value = "";
+    subjectInput.value = "";
     fileInput.value = "";
   };
 
-  reader.readAsDataURL(file); // ⭐ IMPORTANT CHANGE
+  reader.readAsDataURL(file);
 }
 
 
