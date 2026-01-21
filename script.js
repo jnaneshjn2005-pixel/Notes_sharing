@@ -51,6 +51,13 @@ function loadNotes() {
   });
 }
 
+function downloadNote(title, content) {
+  let a = document.createElement("a");
+  a.href = "data:text/plain;charset=utf-8," + encodeURIComponent(content);
+  a.download = title + ".txt";
+  a.click();
+}
+
 function searchNotes() {
   let q = search.value.toLowerCase();
   document.querySelectorAll(".note").forEach(n => {
