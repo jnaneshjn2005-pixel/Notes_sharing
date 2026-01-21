@@ -1,3 +1,7 @@
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+
 const role = localStorage.getItem("role");
 
 if (window.location.pathname.includes("dashboard") && role !== "user") {
