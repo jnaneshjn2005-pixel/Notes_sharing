@@ -1,4 +1,3 @@
-alert("script.js loaded");
 /* ================= LOGIN ================= */
 
 function login() {
