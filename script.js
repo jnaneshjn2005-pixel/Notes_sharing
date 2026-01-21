@@ -1,7 +1,9 @@
-/* =====================
-   LOGIN FUNCTION
-   ===================== */
+/* ===== SERVICE WORKER ===== */
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
 
+/* ===== LOGIN ===== */
 function login() {
   const role = document.getElementById("role").value;
 
@@ -14,37 +16,28 @@ function login() {
   }
 }
 
-/* =====================
-   LOGOUT FUNCTION
-   ===================== */
-
+/* ===== LOGOUT ===== */
 function logout() {
   localStorage.removeItem("role");
   window.location.href = "index.html";
 }
 
-/* =====================
-   ROUTE PROTECTION
-   ===================== */
-
+/* ===== ROUTE PROTECTION ===== */
 const role = localStorage.getItem("role");
 
-if (window.location.pathname.includes("dashboard") && role !== "user") {
-  window.location.href = "index.html";
+if (location.pathname.includes("dashboard") && role !== "user") {
+  location.href = "index.html";
+}
+if (location.pathname.includes("admin") && role !== "admin") {
+  location.href = "index.html";
 }
 
-if (window.location.pathname.includes("admin") && role !== "admin") {
-  window.location.href = "index.html";
-}
-
-/* =====================
-   NOTES LOGIC
-   ===================== */
-
+/* ===== NOTES STORAGE ===== */
 let notes = JSON.parse(localStorage.getItem("notes")) || [];
 
+/* ===== ADD NOTE ===== */
 function addNote() {
-  let note = {
+  const note = {
     title: title.value,
     subject: subject.value,
     content: content.value,
@@ -55,15 +48,16 @@ function addNote() {
 
   notes.push(note);
   localStorage.setItem("notes", JSON.stringify(notes));
-  alert("Note uploaded. Waiting for admin approval.");
+  alert("Note sent for admin approval");
 
   title.value = "";
   subject.value = "";
   content.value = "";
 }
 
+/* ===== LOAD USER NOTES ===== */
 function loadNotes() {
-  let div = document.getElementById("notes");
+  const div = document.getElementById("notes");
   if (!div) return;
 
   div.innerHTML = "";
@@ -73,7 +67,7 @@ function loadNotes() {
         <h3>${n.title}</h3>
         <p>${n.subject}</p>
         <p>${n.content}</p>
-        <p>⭐ Rating: ${n.rating}/5</p>
+        <p>⭐ ${n.rating}/5</p>
         <button onclick="downloadNote('${n.title}','${n.content}')">⬇️ Download</button>
         <button onclick="toggleFav(${i})">❤️ Favorite</button>
         <button onclick="rate(${i},5)">⭐ Rate</button>
@@ -82,65 +76,66 @@ function loadNotes() {
   });
 }
 
+/* ===== SEARCH ===== */
 function searchNotes() {
-  let q = search.value.toLowerCase();
+  const q = search.value.toLowerCase();
   document.querySelectorAll(".note").forEach(n => {
     n.style.display = n.innerText.toLowerCase().includes(q) ? "block" : "none";
   });
 }
 
+/* ===== DOWNLOAD ===== */
 function downloadNote(title, content) {
-  let a = document.createElement("a");
+  const a = document.createElement("a");
   a.href = "data:text/plain;charset=utf-8," + encodeURIComponent(content);
   a.download = title + ".txt";
   a.click();
 }
 
-function toggleFav(index) {
-  notes[index].favorite = !notes[index].favorite;
+/* ===== FAVORITE ===== */
+function toggleFav(i) {
+  notes[i].favorite = !notes[i].favorite;
+  localStorage.setItem("notes", JSON.stringify(notes));
+}
+
+/* ===== RATING ===== */
+function rate(i, stars) {
+  notes[i].rating = stars;
   localStorage.setItem("notes", JSON.stringify(notes));
   loadNotes();
 }
 
-function rate(index, stars) {
-  notes[index].rating = stars;
-  localStorage.setItem("notes", JSON.stringify(notes));
-  loadNotes();
-}
-
-/* =====================
-   ADMIN FUNCTIONS
-   ===================== */
-
+/* ===== ADMIN ===== */
 function loadAdminNotes() {
-  let div = document.getElementById("pending");
+  const div = document.getElementById("pending");
   if (!div) return;
 
   div.innerHTML = "";
-  notes.forEach((note, index) => {
-    if (!note.approved) {
+  notes.forEach((n, i) => {
+    if (!n.approved) {
       div.innerHTML += `
         <div class="note">
-          <h3>${note.title}</h3>
-          <p>${note.subject}</p>
-          <p>${note.content}</p>
-          <button onclick="approveNote(${index})">Approve</button>
+          <h3>${n.title}</h3>
+          <p>${n.subject}</p>
+          <p>${n.content}</p>
+          <button onclick="approveNote(${i})">Approve</button>
         </div>
       `;
     }
   });
 }
 
-function approveNote(index) {
-  notes[index].approved = true;
+function approveNote(i) {
+  notes[i].approved = true;
   localStorage.setItem("notes", JSON.stringify(notes));
   loadAdminNotes();
 }
 
-/* =====================
-   AUTO LOAD
-   ===================== */
+/* ===== DARK MODE ===== */
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+}
 
+/* ===== AUTO LOAD ===== */
 loadNotes();
 loadAdminNotes();
-
