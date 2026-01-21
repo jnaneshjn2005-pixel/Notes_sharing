@@ -98,6 +98,13 @@ function approveNote(index) {
   notes[index].approved = true;
   localStorage.setItem("notes", JSON.stringify(notes));
   loadAdminNotes();
+  
+  function rate(index, stars) {
+  notes[index].rating = stars;
+  localStorage.setItem("notes", JSON.stringify(notes));
+  loadNotes();
+}
+
 }
 
 loadAdminNotes();
