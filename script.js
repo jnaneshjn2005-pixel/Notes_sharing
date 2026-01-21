@@ -19,8 +19,10 @@ function addNote() {
     title: title.value,
     subject: subject.value,
     content: content.value,
-    approved: false
-  };
+    approved: false,
+favorite: false,
+rating: 0
+ };
 
   notes.push(note);
   localStorage.setItem("notes", JSON.stringify(notes));
