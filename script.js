@@ -1,22 +1,14 @@
 /* ===============================
-   SERVICE WORKER (PWA)
-================================ */
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
-}
-
-/* ===============================
-   LOGIN (ADMIN RESTRICTED)
+   LOGIN
 ================================ */
 function login() {
   const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value;
+  const password = document.getElementById("password").value.trim();
   const role = document.getElementById("role").value;
 
-  // ADMIN LOGIN
   if (role === "admin") {
     if (username === "admin" && password === "admin123") {
-      localStorage.clear();                 // 🔴 IMPORTANT
+      localStorage.clear();
       localStorage.setItem("role", "admin");
       localStorage.setItem("username", "Admin");
       window.location.href = "admin.html";
@@ -26,75 +18,56 @@ function login() {
     return;
   }
 
-  // USER LOGIN
   if (role === "user") {
     if (!username) {
       alert("Enter username");
       return;
     }
-    localStorage.clear();                   // 🔴 IMPORTANT
+    localStorage.clear();
     localStorage.setItem("role", "user");
     localStorage.setItem("username", username);
     window.location.href = "dashboard.html";
   }
 }
 
-
 /* ===============================
    LOGOUT
 ================================ */
 function logout() {
-  localStorage.removeItem("role");
-  localStorage.removeItem("username");
+  localStorage.clear();
   window.location.href = "index.html";
 }
 
-function login() {
-  // login code
-}
-
-function logout() {
-  // logout code
-}
-
-/* ===== ROUTE PROTECTION ===== */
-(function protectRoutes() {
+/* ===============================
+   ROUTE PROTECTION (ONLY ONE)
+================================ */
+document.addEventListener("DOMContentLoaded", function () {
   const role = localStorage.getItem("role");
   const page = location.pathname;
 
-  if (page.includes("dashboard.html")) {
+  if (page.endsWith("dashboard.html")) {
     if (role !== "user" && role !== "admin") {
       location.replace("index.html");
     }
   }
 
-  if (page.includes("admin.html")) {
+  if (page.endsWith("admin.html")) {
     if (role !== "admin") {
       location.replace("index.html");
     }
   }
-})();
+});
 
 /* ===============================
-   ROUTE PROTECTION
+   STORAGE HELPERS
 ================================ */
-const role = localStorage.getItem("role");
-if (
-  location.pathname.includes("dashboard") &&
-  role !== "user" &&
-  role !== "admin"
-) {
-  location.href = "index.html";
+function getNotes() {
+  return JSON.parse(localStorage.getItem("notes")) || [];
 }
 
-if (location.pathname.includes("admin") && role !== "admin") {
-  location.href = "index.html";
+function saveNotes(notes) {
+  localStorage.setItem("notes", JSON.stringify(notes));
 }
-
-/* ===============================
-   NOTES STORAGE
-================================ */
-let notes = JSON.parse(localStorage.getItem("notes")) || [];
 
 /* ===============================
    FILE UPLOAD (USER)
@@ -109,118 +82,68 @@ function uploadFile() {
   }
 
   const reader = new FileReader();
-
   reader.onload = function () {
-    const note = {
+    const notes = getNotes();
+
+    notes.push({
       filename: file.name,
-      filetype: file.type,
-      data: reader.result,   // Base64 DataURL
+      data: reader.result,
       uploadedBy: localStorage.getItem("username"),
-      approved: false,
-      favorite: false,
-      rating: 0
-    };
+      approved: false
+    });
 
-    notes.push(note);
-    localStorage.setItem("notes", JSON.stringify(notes));
+    saveNotes(notes);
     alert("File uploaded. Waiting for admin approval");
-
     fileInput.value = "";
   };
 
-  reader.readAsDataURL(file); // ⭐ IMPORTANT CHANGE
+  reader.readAsDataURL(file);
 }
 
-
 /* ===============================
-   USER DASHBOARD – LOAD NOTES
+   USER DASHBOARD
 ================================ */
-
 function loadNotes() {
   const div = document.getElementById("notes");
   if (!div) return;
 
-  const role = localStorage.getItem("role"); // 🔑 REQUIRED
-
+  const notes = getNotes();
+  const role = localStorage.getItem("role");
   div.innerHTML = "";
-  notes.filter(n => n.approved).forEach((n, i) => {
-    div.innerHTML += `
-      <div class="note" style="position:relative;">
 
-        ${role === "admin" ? `
-          <span
-            onclick="adminDelete(${i})"
-            style="position:absolute;top:8px;right:8px;
-                   cursor:pointer;color:red;font-size:18px;"
-            title="Delete File">🗑️</span>
-        ` : ""}
-
-        <h3>📄 ${n.filename}</h3>
-        <p><b>Uploaded by:</b> ${n.uploadedBy}</p>
-        <p>⭐ Rating: ${n.rating}/5</p>
-
-        <button onclick="downloadNote('${n.filename}','${n.data}')">⬇️ Download</button>
-        <button onclick="toggleFav(${i})">❤️ Favorite</button>
-        <button onclick="rate(${i},5)">⭐ Rate</button>
-      </div>
-    `;
-  });
-}
-
-
-/* ===============================
-   SEARCH
-================================ */
-function searchNotes() {
-  const q = search.value.toLowerCase();
-  document.querySelectorAll(".note").forEach(n => {
-    n.style.display = n.innerText.toLowerCase().includes(q) ? "block" : "none";
+  notes.forEach((n, i) => {
+    if (n.approved) {
+      div.innerHTML += `
+        <div class="note" style="position:relative;">
+          ${role === "admin" ? `<span onclick="adminDelete(${i})"
+           style="position:absolute;top:8px;right:8px;cursor:pointer;color:red;">🗑️</span>` : ""}
+          <h3>${n.filename}</h3>
+          <p>Uploaded by: ${n.uploadedBy}</p>
+          <button onclick="downloadNote('${n.filename}','${n.data}')">Download</button>
+        </div>
+      `;
+    }
   });
 }
 
 /* ===============================
-   DOWNLOAD
-================================ */
-function downloadNote(filename, data) {
-  const a = document.createElement("a");
-  a.href = data;          // Base64 data
-  a.download = filename; // original filename
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
-
-/* ===============================
-   FAVORITE & RATING
-================================ */
-function toggleFav(index) {
-  notes[index].favorite = !notes[index].favorite;
-  localStorage.setItem("notes", JSON.stringify(notes));
-}
-
-function rate(index, stars) {
-  notes[index].rating = stars;
-  localStorage.setItem("notes", JSON.stringify(notes));
-  loadNotes();
-}
-
-/* ===============================
-   ADMIN PANEL – LOAD PENDING
+   ADMIN PANEL
 ================================ */
 function loadAdminNotes() {
   const div = document.getElementById("pending");
   if (!div) return;
 
+  const notes = getNotes();
   div.innerHTML = "";
+
   notes.forEach((n, i) => {
     if (!n.approved) {
       div.innerHTML += `
         <div class="note">
-          <h3>📄 ${n.filename}</h3>
-          <p><b>Uploaded by:</b> ${n.uploadedBy}</p>
-
-          <button onclick="approveNote(${i})">✅ Approve</button>
-          <button onclick="rejectNote(${i})" style="background:#dc3545;">❌ Reject</button>
+          <h3>${n.filename}</h3>
+          <p>Uploaded by: ${n.uploadedBy}</p>
+          <button onclick="approve(${i})">Approve</button>
+          <button onclick="reject(${i})">Reject</button>
         </div>
       `;
     }
@@ -230,41 +153,39 @@ function loadAdminNotes() {
 /* ===============================
    ADMIN ACTIONS
 ================================ */
-function approveNote(index) {
-  notes[index].approved = true;
-  localStorage.setItem("notes", JSON.stringify(notes));
+function approve(i) {
+  const notes = getNotes();
+  notes[i].approved = true;
+  saveNotes(notes);
   loadAdminNotes();
 }
 
-function adminDelete(index) {
-  // Extra safety: only admin can delete
-  if (localStorage.getItem("role") !== "admin") {
-    alert("You are not authorized");
-    return;
-  }
-
-  // Confirmation popup
-  if (confirm("Admin: Are you sure you want to delete this file?")) {
-    notes.splice(index, 1); // remove file
-    localStorage.setItem("notes", JSON.stringify(notes));
-    loadNotes();        // refresh user list
-    loadAdminNotes();   // refresh admin list
-  }
+function reject(i) {
+  const notes = getNotes();
+  notes.splice(i, 1);
+  saveNotes(notes);
+  loadAdminNotes();
 }
 
-function rejectNote(index) {
-  if (confirm("Are you sure you want to reject this file?")) {
-    notes.splice(index, 1);
-    localStorage.setItem("notes", JSON.stringify(notes));
+function adminDelete(i) {
+  if (localStorage.getItem("role") !== "admin") return;
+  if (confirm("Delete this file?")) {
+    const notes = getNotes();
+    notes.splice(i, 1);
+    saveNotes(notes);
+    loadNotes();
     loadAdminNotes();
   }
 }
 
 /* ===============================
-   DARK MODE
+   DOWNLOAD
 ================================ */
-function toggleTheme() {
-  document.body.classList.toggle("dark");
+function downloadNote(name, data) {
+  const a = document.createElement("a");
+  a.href = data;
+  a.download = name;
+  a.click();
 }
 
 /* ===============================
