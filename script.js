@@ -106,20 +106,22 @@ function loadNotes() {
   if (!div) return;
 
   const role = localStorage.getItem("role");
-
   div.innerHTML = "";
+
   notes.filter(n => n.approved).forEach((n, i) => {
     div.innerHTML += `
       <div class="note" style="position:relative;">
-        
-        ${role === "admin" ? `
-          <span 
-            onclick="adminDelete(${i})"
-            style="position:absolute;top:10px;right:10px;cursor:pointer;color:red;font-size:18px;"
-            title="Delete File">🗑️</span>
-        ` : ""}
 
-        <h3>📄 ${n.filename}</h3>
+        ${role === "admin" ? `
+          <span onclick="adminDelete(${i})"
+                style="position:absolute;top:8px;right:8px;
+                       cursor:pointer;color:red;font-size:18px;">
+            🗑️
+          </span>` : ""}
+
+        <h3>📘 ${n.title}</h3>
+        <p><b>Subject:</b> ${n.subject}</p>
+        <p><b>File:</b> ${n.filename}</p>
         <p><b>Uploaded by:</b> ${n.uploadedBy}</p>
         <p>⭐ Rating: ${n.rating}/5</p>
 
@@ -130,7 +132,6 @@ function loadNotes() {
     `;
   });
 }
-
 
 /* ===== SEARCH ===== */
 function searchNotes() {
