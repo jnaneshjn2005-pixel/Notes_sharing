@@ -170,13 +170,16 @@ function loadAdminNotes() {
   if (!div) return;
 
   div.innerHTML = "";
+
   notes.forEach((n, i) => {
-    if (!n.approved) {
+    if (n.approved === false) {
       div.innerHTML += `
         <div class="note">
           <h4>${n.title}</h4>
-          <p>${n.subject}</p>
-          <p>${n.filename}</p>
+          <p><b>Subject:</b> ${n.subject}</p>
+          <p><b>File:</b> ${n.filename}</p>
+          <p><b>Uploaded by:</b> ${n.uploadedBy}</p>
+
           <button onclick="approve(${i})">Approve</button>
           <button onclick="reject(${i})">Reject</button>
         </div>
@@ -184,6 +187,7 @@ function loadAdminNotes() {
     }
   });
 }
+
 
 /* ================= ACTIONS ================= */
 
