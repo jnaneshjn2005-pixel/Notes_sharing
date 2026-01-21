@@ -1,3 +1,13 @@
+const role = localStorage.getItem("role");
+
+if (window.location.pathname.includes("dashboard") && role !== "user") {
+  window.location.href = "index.html";
+}
+
+if (window.location.pathname.includes("admin") && role !== "admin") {
+  window.location.href = "index.html";
+}
+
 let notes = JSON.parse(localStorage.getItem("notes")) || [];
 
 function logout() {
