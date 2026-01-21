@@ -1,24 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
   <title>Admin Panel</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="manifest" href="manifest.json">
 </head>
 <body>
 
-<div class="container">
-  <h1>🛡️ Admin Panel</h1>
+<h2>Admin Panel</h2>
 
-  <button onclick="logout()">Logout</button>
-  <button onclick="window.location.href='dashboard.html'">
-  📂 View Approved Files
-</button>
+<button onclick="logout()">Logout</button>
 
-  <h3>Pending Notes</h3>
-  <div id="pending"></div>
-</div>
+<h3>Pending Approvals</h3>
+
+<!-- 🔴 THIS CONTAINER IS REQUIRED -->
+<div id="pending"></div>
 
 <script src="script.js"></script>
 </body>
