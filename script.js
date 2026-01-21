@@ -138,39 +138,33 @@ function loadNotes() {
    ADMIN PANEL
 ================================ */
 function loadAdminNotes() {
-  const div = document.getElementById("pending");
-  if (!div) return;
+  const container = document.getElementById("pending");
+  if (!container) return;
 
-  // 🔴 ALWAYS read fresh data
-  const notes = JSON.parse(localStorage.getItem("notes")) || [];
-
-  div.innerHTML = "";
-
-  if (notes.length === 0) {
-    div.innerHTML = "<p>No pending uploads</p>";
-    return;
-  }
+  const notes = getNotes(); // 🔴 always fresh
+  container.innerHTML = "";
 
   let found = false;
 
-  notes.forEach((n, i) => {
-    if (n.approved === false) {
+  notes.forEach((note, index) => {
+    if (note.approved === false) {
       found = true;
-      div.innerHTML += `
+      container.innerHTML += `
         <div class="note">
-          <h3>${n.filename}</h3>
-          <p><b>Uploaded by:</b> ${n.uploadedBy}</p>
-          <button onclick="approve(${i})">Approve</button>
-          <button onclick="reject(${i})">Reject</button>
+          <p><b>File:</b> ${note.filename}</p>
+          <p><b>Uploaded by:</b> ${note.uploadedBy}</p>
+          <button onclick="approve(${index})">Approve</button>
+          <button onclick="reject(${index})">Reject</button>
         </div>
       `;
     }
   });
 
   if (!found) {
-    div.innerHTML = "<p>No pending uploads</p>";
+    container.innerHTML = "<p>No pending notes</p>";
   }
 }
+
 
 /* ===============================
    ADMIN ACTIONS
