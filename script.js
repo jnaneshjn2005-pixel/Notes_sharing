@@ -1,4 +1,5 @@
 /* ================= LOGIN ================= */
+
 function login() {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
@@ -28,30 +29,6 @@ function login() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  const role = localStorage.getItem("role");
-  const page = window.location.pathname;
-
-  // Allow login page always
-  if (page.endsWith("/") || page.endsWith("index.html")) {
-    return;
-  }
-
-  // Protect dashboard
-  if (page.endsWith("dashboard.html")) {
-    if (role !== "user" && role !== "admin") {
-      window.location.href = "index.html";
-    }
-  }
-
-  // Protect admin page
-  if (page.endsWith("admin.html")) {
-    if (role !== "admin") {
-      window.location.href = "index.html";
-    }
-  }
-});
-
 /* ================= LOGOUT ================= */
 
 function logout() {
@@ -59,33 +36,9 @@ function logout() {
   window.location.href = "index.html";
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  const role = localStorage.getItem("role");
-  const page = window.location.pathname;
-
-  // Allow login page always
-  if (page.endsWith("/") || page.endsWith("index.html")) {
-    return;
-  }
-
-  // Protect dashboard
-  if (page.endsWith("dashboard.html")) {
-    if (role !== "user" && role !== "admin") {
-      window.location.href = "index.html";
-    }
-  }
-
-  // Protect admin page
-  if (page.endsWith("admin.html")) {
-    if (role !== "admin") {
-      window.location.href = "index.html";
-    }
-  }
-});
-
 /* ================= ROUTE PROTECTION ================= */
 
-(function () {
+document.addEventListener("DOMContentLoaded", function () {
   const role = localStorage.getItem("role");
   const page = location.pathname;
 
@@ -100,11 +53,17 @@ document.addEventListener("DOMContentLoaded", function () {
       location.replace("index.html");
     }
   }
-})();
+});
 
-/* ================= STORAGE ================= */
+/* ================= FILE STORAGE ================= */
 
-let notes = JSON.parse(localStorage.getItem("notes")) || [];
+function getNotes() {
+  return JSON.parse(localStorage.getItem("notes")) || [];
+}
+
+function saveNotes(notes) {
+  localStorage.setItem("notes", JSON.stringify(notes));
+}
 
 /* ================= FILE UPLOAD ================= */
 
@@ -120,6 +79,8 @@ function uploadFile() {
 
   const reader = new FileReader();
   reader.onload = function () {
+    const notes = getNotes();
+
     notes.push({
       title,
       subject,
@@ -129,8 +90,8 @@ function uploadFile() {
       approved: false
     });
 
-    localStorage.setItem("notes", JSON.stringify(notes));
-    alert("Uploaded. Waiting for admin approval");
+    saveNotes(notes);
+    alert("Uploaded. Waiting for admin approval.");
 
     document.getElementById("title").value = "";
     document.getElementById("subject").value = "";
@@ -146,20 +107,24 @@ function loadNotes() {
   const div = document.getElementById("notes");
   if (!div) return;
 
+  const notes = getNotes();
   const role = localStorage.getItem("role");
+
   div.innerHTML = "";
 
-  notes.filter(n => n.approved).forEach((n, i) => {
-    div.innerHTML += `
-      <div class="note">
-        ${role === "admin" ? `<span class="delete" onclick="deleteFile(${i})">🗑️</span>` : ""}
-        <h4>${n.title}</h4>
-        <p>Subject: ${n.subject}</p>
-        <p>File: ${n.filename}</p>
-        <p>Uploaded by: ${n.uploadedBy}</p>
-        <button onclick="downloadFile('${n.filename}','${n.data}')">Download</button>
-      </div>
-    `;
+  notes.forEach((n, i) => {
+    if (n.approved) {
+      div.innerHTML += `
+        <div class="note">
+          ${role === "admin" ? `<span class="delete" onclick="deleteFile(${i})">🗑️</span>` : ""}
+          <h4>${n.title}</h4>
+          <p>Subject: ${n.subject}</p>
+          <p>File: ${n.filename}</p>
+          <p>Uploaded by: ${n.uploadedBy}</p>
+          <button onclick="downloadFile('${n.filename}','${n.data}')">Download</button>
+        </div>
+      `;
+    }
   });
 }
 
@@ -169,17 +134,17 @@ function loadAdminNotes() {
   const div = document.getElementById("pending");
   if (!div) return;
 
+  const notes = getNotes();
   div.innerHTML = "";
 
   notes.forEach((n, i) => {
-    if (n.approved === false) {
+    if (!n.approved) {
       div.innerHTML += `
         <div class="note">
           <h4>${n.title}</h4>
-          <p><b>Subject:</b> ${n.subject}</p>
-          <p><b>File:</b> ${n.filename}</p>
-          <p><b>Uploaded by:</b> ${n.uploadedBy}</p>
-
+          <p>Subject: ${n.subject}</p>
+          <p>File: ${n.filename}</p>
+          <p>Uploaded by: ${n.uploadedBy}</p>
           <button onclick="approve(${i})">Approve</button>
           <button onclick="reject(${i})">Reject</button>
         </div>
@@ -188,26 +153,28 @@ function loadAdminNotes() {
   });
 }
 
-
-/* ================= ACTIONS ================= */
+/* ================= ADMIN ACTIONS ================= */
 
 function approve(i) {
+  const notes = getNotes();
   notes[i].approved = true;
-  localStorage.setItem("notes", JSON.stringify(notes));
+  saveNotes(notes);
   loadAdminNotes();
 }
 
 function reject(i) {
+  const notes = getNotes();
   notes.splice(i, 1);
-  localStorage.setItem("notes", JSON.stringify(notes));
+  saveNotes(notes);
   loadAdminNotes();
 }
 
 function deleteFile(i) {
   if (localStorage.getItem("role") !== "admin") return;
   if (confirm("Delete this file?")) {
+    const notes = getNotes();
     notes.splice(i, 1);
-    localStorage.setItem("notes", JSON.stringify(notes));
+    saveNotes(notes);
     loadNotes();
     loadAdminNotes();
   }
