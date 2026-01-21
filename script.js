@@ -133,21 +133,35 @@ function loadAdminNotes() {
   const div = document.getElementById("pending");
   if (!div) return;
 
-  const notes = getNotes();
+  // 🔴 ALWAYS read fresh data
+  const notes = JSON.parse(localStorage.getItem("notes")) || [];
+
   div.innerHTML = "";
 
+  if (notes.length === 0) {
+    div.innerHTML = "<p>No pending uploads</p>";
+    return;
+  }
+
+  let found = false;
+
   notes.forEach((n, i) => {
-    if (!n.approved) {
+    if (n.approved === false) {
+      found = true;
       div.innerHTML += `
         <div class="note">
           <h3>${n.filename}</h3>
-          <p>Uploaded by: ${n.uploadedBy}</p>
+          <p><b>Uploaded by:</b> ${n.uploadedBy}</p>
           <button onclick="approve(${i})">Approve</button>
           <button onclick="reject(${i})">Reject</button>
         </div>
       `;
     }
   });
+
+  if (!found) {
+    div.innerHTML = "<p>No pending uploads</p>";
+  }
 }
 
 /* ===============================
