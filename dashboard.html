@@ -6,20 +6,19 @@
 </head>
 <body>
 
-<div class="box">
-  <h2>User Dashboard</h2>
+<h1>📘 User Dashboard</h1>
+<button onclick="logout()">Logout</button>
 
-  <button onclick="logout()">Logout</button>
-
-  <h3>Upload Notes</h3>
-  <input type="text" id="title" placeholder="Title">
+<div class="upload-box">
+  <input type="text" id="title" placeholder="Note Title">
   <input type="text" id="subject" placeholder="Subject">
-  <input type="file" id="file">
-  <button onclick="uploadFile()">Upload</button>
-
-  <h3>Approved Notes</h3>
-  <div id="notes"></div>
+  <textarea id="content" placeholder="Write notes"></textarea>
+  <button onclick="addNote()">Upload Note</button>
 </div>
+
+<input type="text" id="search" placeholder="Search notes" onkeyup="searchNotes()">
+
+<div id="notes"></div>
 
 <script src="script.js"></script>
 </body>
