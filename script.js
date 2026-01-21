@@ -199,6 +199,22 @@ function approveNote(index) {
   loadAdminNotes();
 }
 
+function adminDelete(index) {
+  // Extra safety: only admin can delete
+  if (localStorage.getItem("role") !== "admin") {
+    alert("You are not authorized");
+    return;
+  }
+
+  // Confirmation popup
+  if (confirm("Admin: Are you sure you want to delete this file?")) {
+    notes.splice(index, 1); // remove file
+    localStorage.setItem("notes", JSON.stringify(notes));
+    loadNotes();        // refresh user list
+    loadAdminNotes();   // refresh admin list
+  }
+}
+
 function rejectNote(index) {
   if (confirm("Are you sure you want to reject this file?")) {
     notes.splice(index, 1);
