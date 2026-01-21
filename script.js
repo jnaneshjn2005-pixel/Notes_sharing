@@ -135,11 +135,13 @@ function searchNotes() {
 /* ===============================
    DOWNLOAD
 ================================ */
-function downloadNote(filename, content) {
+function downloadNote(filename, data) {
   const a = document.createElement("a");
-  a.href = "data:text/plain;charset=utf-8," + encodeURIComponent(content);
-  a.download = filename;
+  a.href = data;          // Base64 data
+  a.download = filename; // original filename
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
 }
 
 /* ===============================
