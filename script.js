@@ -100,21 +100,23 @@ function uploadFile() {
 /* ===============================
    USER DASHBOARD – LOAD NOTES
 ================================ */
+
 function loadNotes() {
   const div = document.getElementById("notes");
   if (!div) return;
 
-  const role = localStorage.getItem("role");
+  const role = localStorage.getItem("role"); // 🔑 REQUIRED
 
   div.innerHTML = "";
   notes.filter(n => n.approved).forEach((n, i) => {
     div.innerHTML += `
       <div class="note" style="position:relative;">
-        
+
         ${role === "admin" ? `
-          <span 
+          <span
             onclick="adminDelete(${i})"
-            style="position:absolute;top:10px;right:10px;cursor:pointer;color:red;font-size:18px;"
+            style="position:absolute;top:8px;right:8px;
+                   cursor:pointer;color:red;font-size:18px;"
             title="Delete File">🗑️</span>
         ` : ""}
 
