@@ -1,6 +1,31 @@
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
+/* =====================
+   LOGIN FUNCTION
+   ===================== */
+
+function login() {
+  const role = document.getElementById("role").value;
+
+  if (role === "admin") {
+    localStorage.setItem("role", "admin");
+    window.location.href = "admin.html";
+  } else {
+    localStorage.setItem("role", "user");
+    window.location.href = "dashboard.html";
+  }
 }
+
+/* =====================
+   LOGOUT FUNCTION
+   ===================== */
+
+function logout() {
+  localStorage.removeItem("role");
+  window.location.href = "index.html";
+}
+
+/* =====================
+   ROUTE PROTECTION
+   ===================== */
 
 const role = localStorage.getItem("role");
 
@@ -12,11 +37,11 @@ if (window.location.pathname.includes("admin") && role !== "admin") {
   window.location.href = "index.html";
 }
 
-let notes = JSON.parse(localStorage.getItem("notes")) || [];
+/* =====================
+   NOTES LOGIC
+   ===================== */
 
-function logout() {
-  window.location.href = "index.html";
-}
+let notes = JSON.parse(localStorage.getItem("notes")) || [];
 
 function addNote() {
   let note = {
@@ -24,9 +49,9 @@ function addNote() {
     subject: subject.value,
     content: content.value,
     approved: false,
-favorite: false,
-rating: 0
- };
+    favorite: false,
+    rating: 0
+  };
 
   notes.push(note);
   localStorage.setItem("notes", JSON.stringify(notes));
@@ -48,12 +73,19 @@ function loadNotes() {
         <h3>${n.title}</h3>
         <p>${n.subject}</p>
         <p>${n.content}</p>
-
+        <p>⭐ Rating: ${n.rating}/5</p>
         <button onclick="downloadNote('${n.title}','${n.content}')">⬇️ Download</button>
         <button onclick="toggleFav(${i})">❤️ Favorite</button>
         <button onclick="rate(${i},5)">⭐ Rate</button>
       </div>
     `;
+  });
+}
+
+function searchNotes() {
+  let q = search.value.toLowerCase();
+  document.querySelectorAll(".note").forEach(n => {
+    n.style.display = n.innerText.toLowerCase().includes(q) ? "block" : "none";
   });
 }
 
@@ -70,14 +102,15 @@ function toggleFav(index) {
   loadNotes();
 }
 
-function searchNotes() {
-  let q = search.value.toLowerCase();
-  document.querySelectorAll(".note").forEach(n => {
-    n.style.display = n.innerText.toLowerCase().includes(q) ? "block" : "none";
-  });
+function rate(index, stars) {
+  notes[index].rating = stars;
+  localStorage.setItem("notes", JSON.stringify(notes));
+  loadNotes();
 }
 
-loadNotes();
+/* =====================
+   ADMIN FUNCTIONS
+   ===================== */
 
 function loadAdminNotes() {
   let div = document.getElementById("pending");
@@ -102,18 +135,12 @@ function approveNote(index) {
   notes[index].approved = true;
   localStorage.setItem("notes", JSON.stringify(notes));
   loadAdminNotes();
-  
-  function rate(index, stars) {
-  notes[index].rating = stars;
-  localStorage.setItem("notes", JSON.stringify(notes));
-  loadNotes();
 }
 
-}
+/* =====================
+   AUTO LOAD
+   ===================== */
 
+loadNotes();
 loadAdminNotes();
-function toggleTheme() {
-  document.body.classList.toggle("dark");
-}
-
 
