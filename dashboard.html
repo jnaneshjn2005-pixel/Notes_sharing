@@ -1,26 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>User Dashboard</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
 
-<h1>📘 User Dashboard</h1>
-<button onclick="logout()">Logout</button>
+<div class="container">
+  <h1>📘 User Dashboard</h1>
+
+  <button onclick="logout()">Logout</button>
   <button onclick="toggleTheme()">🌙 Dark Mode</button>
 
+  <div class="upload-box">
+    <input type="text" id="title" placeholder="Note Title">
+    <input type="text" id="subject" placeholder="Subject">
+    <textarea id="content" placeholder="Write notes here"></textarea>
+    <button onclick="addNote()">Upload (Admin Approval)</button>
+  </div>
 
-<div class="upload-box">
-  <input type="text" id="title" placeholder="Note Title">
-  <input type="text" id="subject" placeholder="Subject">
-  <textarea id="content" placeholder="Write notes"></textarea>
-  <button onclick="addNote()">Upload Note</button>
+  <input type="text" id="search" placeholder="Search notes" onkeyup="searchNotes()">
+
+  <div id="notes"></div>
 </div>
-
-<input type="text" id="search" placeholder="Search notes" onkeyup="searchNotes()">
-
-<div id="notes"></div>
 
 <script src="script.js"></script>
 </body>
