@@ -169,12 +169,11 @@ function loadAdminNotes() {
   const div = document.getElementById("pending");
   if (!div) return;
 
-  div.innerHTML = "";
-  notes.forEach((n, i) => {
-    if (!n.approved) {
-      div.innerHTML += `
+  div.innerHTML += `
   <div class="note">
-    <h3>📄 ${n.filename}</h3>
+    <h3>📘 ${n.title}</h3>
+    <p><b>Subject:</b> ${n.subject}</p>
+    <p><b>File:</b> ${n.filename}</p>
     <p><b>Uploaded by:</b> ${n.uploadedBy}</p>
 
     <button onclick="approveNote(${i})">✅ Approve</button>
