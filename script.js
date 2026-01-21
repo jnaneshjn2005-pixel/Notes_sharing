@@ -58,6 +58,12 @@ function downloadNote(title, content) {
   a.click();
 }
 
+function toggleFav(index) {
+  notes[index].favorite = !notes[index].favorite;
+  localStorage.setItem("notes", JSON.stringify(notes));
+  loadNotes();
+}
+
 function searchNotes() {
   let q = search.value.toLowerCase();
   document.querySelectorAll(".note").forEach(n => {
