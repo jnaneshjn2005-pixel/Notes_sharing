@@ -1,17 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Admin Panel</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
 
-<h1>🛡️ Admin Panel</h1>
-<button onclick="logout()">Logout</button>
+<div class="container">
+  <h1>🛡️ Admin Panel</h1>
 
-<h3>Pending Notes (Waiting for Approval)</h3>
+  <button onclick="logout()">Logout</button>
 
-<div id="pending"></div>
+  <h3>Pending Notes</h3>
+  <div id="pending"></div>
+</div>
 
 <script src="script.js"></script>
 </body>
