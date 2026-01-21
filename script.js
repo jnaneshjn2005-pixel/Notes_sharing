@@ -4,24 +4,16 @@ if ("serviceWorker" in navigator) {
 }
 
 /* ===== LOGIN ===== */
-function login() {
-  const usernameEl = document.getElementById("username");
-  const passwordEl = document.getElementById("password");
-  const roleEl = document.getElementById("role");
 
-  if (!usernameEl || !roleEl) {
-    alert("Login form error");
-    return;
-  }
+   function login() {
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const role = document.getElementById("role").value;
 
-  const username = usernameEl.value.trim();
-  const password = passwordEl ? passwordEl.value : "";
-  const role = roleEl.value;
+  console.log("LOGIN ATTEMPT:", username, role);
 
-  // ADMIN LOGIN
   if (role === "admin") {
     if (username === "admin" && password === "admin123") {
-      localStorage.clear();
       localStorage.setItem("role", "admin");
       localStorage.setItem("username", "Admin");
       window.location.href = "admin.html";
@@ -31,13 +23,11 @@ function login() {
     return;
   }
 
-  // USER LOGIN
   if (role === "user") {
-    if (username === "") {
+    if (!username) {
       alert("Enter username");
       return;
     }
-    localStorage.clear();
     localStorage.setItem("role", "user");
     localStorage.setItem("username", username);
     window.location.href = "dashboard.html";
