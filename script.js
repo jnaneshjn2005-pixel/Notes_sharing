@@ -29,12 +29,60 @@ function login() {
   }
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+  const role = localStorage.getItem("role");
+  const page = window.location.pathname;
+
+  // Allow login page always
+  if (page.endsWith("/") || page.endsWith("index.html")) {
+    return;
+  }
+
+  // Protect dashboard
+  if (page.endsWith("dashboard.html")) {
+    if (role !== "user" && role !== "admin") {
+      window.location.href = "index.html";
+    }
+  }
+
+  // Protect admin page
+  if (page.endsWith("admin.html")) {
+    if (role !== "admin") {
+      window.location.href = "index.html";
+    }
+  }
+});
+
 /* ================= LOGOUT ================= */
 
 function logout() {
   localStorage.clear();
   window.location.href = "index.html";
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  const role = localStorage.getItem("role");
+  const page = window.location.pathname;
+
+  // Allow login page always
+  if (page.endsWith("/") || page.endsWith("index.html")) {
+    return;
+  }
+
+  // Protect dashboard
+  if (page.endsWith("dashboard.html")) {
+    if (role !== "user" && role !== "admin") {
+      window.location.href = "index.html";
+    }
+  }
+
+  // Protect admin page
+  if (page.endsWith("admin.html")) {
+    if (role !== "admin") {
+      window.location.href = "index.html";
+    }
+  }
+});
 
 /* ================= ROUTE PROTECTION ================= */
 
