@@ -52,19 +52,24 @@ function logout() {
 }
 
 /* ===== ROUTE PROTECTION ===== */
-const role = localStorage.getItem("role");
+(function protectRoutes() {
+  const role = localStorage.getItem("role");
+  const page = window.location.pathname;
 
-if (
-  location.pathname.includes("dashboard") &&
-  role !== "user" &&
-  role !== "admin"
-) {
-  location.href = "index.html";
-}
+  // Protect dashboard
+  if (page.endsWith("dashboard.html")) {
+    if (role !== "user" && role !== "admin") {
+      window.location.replace("index.html");
+    }
+  }
 
-if (location.pathname.includes("admin") && role !== "admin") {
-  location.href = "index.html";
-}
+  // Protect admin page
+  if (page.endsWith("admin.html")) {
+    if (role !== "admin") {
+      window.location.replace("index.html");
+    }
+  }
+})();
 
 /* ===== NOTES STORAGE ===== */
 let notes = JSON.parse(localStorage.getItem("notes")) || [];
