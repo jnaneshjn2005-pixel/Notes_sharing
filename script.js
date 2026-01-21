@@ -5,7 +5,10 @@ if ("serviceWorker" in navigator) {
 
 /* ===== LOGIN ===== */
 function login() {
+  const username = document.getElementById("username").value;
   const role = document.getElementById("role").value;
+
+  localStorage.setItem("username", username || "Anonymous");
 
   if (role === "admin") {
     localStorage.setItem("role", "admin");
